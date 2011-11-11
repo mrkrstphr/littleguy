@@ -14,7 +14,7 @@
 #include "Level.h"
 
 #define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+#define SCREEN_HEIGHT 256
 #define TILE_SIZE 32
 
 SDL_Surface *screen = NULL;
@@ -32,104 +32,127 @@ int m_offsetX, m_offsetY;
 
 /* This function draws to the screen; replace this with your own code! */
 static void draw () {
-    SDL_Rect dest;
-
-    // compute the number of tiles we need:
-    int numTilesW = (SCREEN_WIDTH / TILE_SIZE);
-    int numTilesH = (SCREEN_HEIGHT / TILE_SIZE);
-
-    int xRegion = (SCREEN_WIDTH / 2) - (m_character->getGraphicWidth() / 2);
-    int yRegion = (SCREEN_HEIGHT / 2) - (m_character->getGraphicHeight() / 2);
-
-    int characterPosX = (m_character->getCharacterX() + (SCREEN_WIDTH / 2)) + (m_character->getGraphicWidth() / 2);
-    int characterPosY = (m_character->getCharacterY() + (SCREEN_HEIGHT / 2)) + (m_character->getGraphicHeight() / 2);
-
-    // increase tile count if we don't fit perfectly:
-    if (SCREEN_WIDTH % TILE_SIZE != 0) numTilesW++;
-    if (SCREEN_HEIGHT % TILE_SIZE != 0) numTilesH++;
-
-    if (characterPosX >= (m_level->getMapWidth() * TILE_SIZE))
-        m_offsetX = (m_level->getMapWidth() * TILE_SIZE) - SCREEN_WIDTH;
-    else if (m_character->getCharacterX() > xRegion)
-        m_offsetX = abs(m_character->getCharacterX() - xRegion);
-
-    if (characterPosY >= (m_level->getMapHeight() * TILE_SIZE))
-        m_offsetY = (m_level->getMapWidth() * TILE_SIZE) - SCREEN_HEIGHT;
-    else if (m_character->getCharacterY() > yRegion)
-        m_offsetY = abs(m_character->getCharacterY() - yRegion);
-
-    // compute how far off the screen the first tile is:
-    int tileOffsetX = (m_offsetX % TILE_SIZE);
-    int tileOffsetY = (m_offsetY % TILE_SIZE);
-
-    // handle condition of split tiles:
-    if (tileOffsetX != 0) numTilesW++;
-    if (tileOffsetY != 0) numTilesH++;
-
-    if ((numTilesH - 1) + (m_offsetX / TILE_SIZE) > m_level->getMapHeight() * TILE_SIZE) {
-       printf("TileHeight is out-of-bounds...\n");
-       system("pause");
-       exit(1);
+    
+    // Where is our character?
+    
+    SDL_Rect character = m_character->getPosition();
+    SDL_Rect position = character;
+    SDL_Rect map;
+    
+    map.w = SCREEN_WIDTH; 
+    map.h = SCREEN_HEIGHT;
+    map.x = 0; 
+    map.y = 0;
+    
+    // X
+    
+    /*
+    if (character position < center of screen) {
+        he is where he is
+    } else if (character position > center of screen) {
+        if (character position > width of the map - half the screen) {
+            he is where he is @ screen - (size of map - position)
+        } else {
+            he is centered
+        }
+    } 
+    */
+    
+    if (position.y + (position.h / 2) <= (SCREEN_HEIGHT / 2)) {
+        // he is where he is
+    } else {
+        if (position.y + (position.h / 2) > (m_level->getMapHeight() * TILE_SIZE) - (SCREEN_HEIGHT / 2)) {
+            // he is @ screen - (size of map - position)
+            position.y = SCREEN_HEIGHT - ((m_level->getMapHeight() * TILE_SIZE) - position.y);
+            
+            map.y = character.y - position.y;
+        } else {
+            // he is centered
+            position.y = (SCREEN_HEIGHT / 2) - (position.h / 2);
+            
+            map.y = character.y - position.y;
+        
+            //printf("testing: [%d vs %d]\n", character.y, position.y);
+        }
     }
+    
+    /*
+    if (position.x + (position.w / 2) <= (SCREEN_WIDTH / 2)) {
+        // he is where he is
+    } else {
+        if (position.x + (position.h / 2) > (m_level->getMapWidth() * TILE_SIZE) - (SCREEN_WIDTH / 2)) {
+            // he is @ screen - (size of map - position)
+            position.x = SCREEN_WIDTH - ((m_level->getMapWidth() * TILE_SIZE) - position.x);
+            
+            map.x = character.x - position.x;
+        } else {
+            // he is centered
+            position.x = (SCREEN_WIDTH / 2) - (position.w / 2);
+            
+            map.x = character.x - position.x;
+        
+            printf("testing: [%d vs %d]\n", character.x, position.x);
+        }
+    }
+    */
+    
+    
+    int numTilesX = SCREEN_WIDTH / TILE_SIZE;
+    int numTilesY = SCREEN_HEIGHT / TILE_SIZE;
+    
+    if (map.x % TILE_SIZE > 0)
+    {
+        numTilesX++;
+    }
+    
+    if (map.y % TILE_SIZE > 0)
+    {
+        numTilesY++;
+    }
+    
+    if ((map.y / TILE_SIZE) + numTilesY > m_level->getMapHeight()) {
+        printf("REDUCING\n");
+        map.y -= TILE_SIZE;
+    }
+    
+    /*
+    for (int x = 0; x <= numTilesX; x++) {
+        for (int y = 0; y <= numTilesY; y++) {
+            
+            int tileY = (map.y / TILE_SIZE) + y;
+            
+            //printf("map: [%d,%d], tile_x: [%d,%d]\n", x, y, tileX, tileY);
+            
+            printf("getTileAt(%d, %d);\n", x, tileY);
+            
+            //continue;
+            
+            if (tileY >= m_level->getMapHeight()) {
+                printf("Detected a problem: %d >= %d\n", tileY, m_level->getMapHeight());
+            }
+            
+            int t = m_level->getTileAt(x, tileY);
+            
+            SDL_Rect dest;
+            
+            dest.w = TILE_SIZE; 
+            dest.h = TILE_SIZE;
+            dest.x = (x * TILE_SIZE) - (map.x % TILE_SIZE); 
+            dest.y = (y * TILE_SIZE) - (map.y % TILE_SIZE);
 
-    printf("   Finished needless calculation...\n");
+            //dest.x = i * TILE_SIZE - tileOffsetX; dest.y = j * TILE_SIZE - tileOffsetY;
+            //dest.w = TILE_SIZE; dest.h = TILE_SIZE;
 
-    // ********** draw the world (tiles):
-    for (int i = 0; i < numTilesW; i++) {
-        for (int j = 0; j < numTilesH; j++) {
-            // find the current tile:
-            if (j >= m_level->getMapHeight())
-               break;
-
-            //assert(j < m_level->getMapHeight());
-
-            int t = m_level->getTileAt(i + (m_offsetX / TILE_SIZE), j + (m_offsetY / TILE_SIZE));
-
-
-            dest.x = i * TILE_SIZE - tileOffsetX; dest.y = j * TILE_SIZE - tileOffsetY;
-            dest.w = TILE_SIZE; dest.h = TILE_SIZE;
-
+            printf(":== Drawing Tile @ [%d,%d]\n", dest.x, dest.y);
             if (t == 0)
                 SDL_BlitSurface(grass, NULL, screen, &dest);
             else
                 SDL_BlitSurface(dirt, NULL, screen, &dest);
-
-            printf("Max: %d, Current: %d\n", m_level->getMapHeight(), j);
         }
     }
-
-    printf("   Finished drawing the map...\n");
-
-    // ********** draw the character:
-
-    if (m_character->getCharacterX() < xRegion)
-        dest.x = m_character->getCharacterX();
-    else
-        dest.x = xRegion;
-
-    if (m_character->getCharacterY() < yRegion)
-        dest.y = m_character->getCharacterY();
-    else
-        dest.y = yRegion;
-
-    //printf("L: %d, +SW:%d, M:%d\n", m_character->getCharacterX(),
-    //    m_character->getCharacterX() + (SCREEN_WIDTH / 2),
-    //    m_level->getMapWidth() * TILE_SIZE);
-
-    if ((m_character->getCharacterX() + (SCREEN_WIDTH / 2))
-      + (m_character->getGraphicWidth() / 2) >= (m_level->getMapWidth() * TILE_SIZE)) {
-        //dest.x = SCREEN_WIDTH - ((m_level->getMapWidth() * TILE_SIZE) - m_character->getCharacterX());
-    }
-
-    if ((m_character->getCharacterY() + (SCREEN_HEIGHT / 2))
-     >= (m_level->getMapHeight() * TILE_SIZE))
-        printf("STOP! STOP! STOP!\n");
-
-    dest.w = 96; dest.h = 96;
-
-    SDL_BlitSurface(m_character->getCurrentSprite(), NULL, screen, &dest);
-
-    // ********** update the screen:
+    */
+    
+    SDL_BlitSurface(m_character->getCurrentSprite(), NULL, screen, &position);
     SDL_Flip(screen);
 }
 
@@ -193,13 +216,9 @@ int main (int argc, char *argv[]) {
         }
 
         m_character->tick();
-        printf("Character has updated...\n");
 
         /* Draw to screen */
         draw();
-        printf("Draw() has finished...\n");
-
-        printf("Successful finish...\n\n");
 
         SDL_Delay(80);
     }

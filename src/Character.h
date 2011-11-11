@@ -24,7 +24,9 @@ class Character {
         Sprite *m_spriteUp, *m_spriteDown;
         Sprite *m_spriteUpRight, *m_spriteUpLeft;
         Sprite *m_spriteDownRight, *m_spriteDownLeft;
-
+        
+        SDL_Rect m_position;
+    
     public:
         Character(int, int, int, int);
         ~Character();
@@ -36,6 +38,8 @@ class Character {
 
         int getGraphicWidth();
         int getGraphicHeight();
+        
+        SDL_Rect getPosition();
 
         void tick();
 };

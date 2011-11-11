@@ -86,10 +86,11 @@ Character::Character(int locationX, int locationY, int mapWidth, int mapHeight)
     m_spriteDownLeft->load(SDL_LoadBMP("graphics/boy/walking_sw06.bmp"));
     m_spriteDownLeft->load(SDL_LoadBMP("graphics/boy/walking_sw07.bmp"));
 
-    m_currentSprite = m_spriteDown;
+    m_currentSprite = new Sprite();
+    m_currentSprite->load(SDL_LoadBMP("graphics/block.bmp"));
 
-    m_width = 35;
-    m_height = 50;
+    m_width = 32;
+    m_height = 32;
 
     srand(time(NULL));
 }
@@ -108,6 +109,10 @@ Character::~Character() {
 
 SDL_Surface *Character::getCurrentSprite() {
     return m_currentSprite->getFrame(m_currentFrame);
+}
+
+SDL_Rect Character::getPosition() {
+    return m_position;
 }
 
 int Character::getCharacterX() {
@@ -129,8 +134,8 @@ int Character::getGraphicHeight() {
 void Character::tick() {
     if (m_currentX == m_destX && m_currentY == m_destY) {
        // generate new destination:
-       m_destX = rand() % (m_mapWidth - m_width);
-       m_destY = rand() % (m_mapHeight - m_height);
+       m_destX = 32; //(m_mapWidth - m_width) / 2; //rand() % (m_mapWidth - m_width);
+       m_destY = (m_mapHeight - m_height);// / 2; //rand() % (m_mapHeight - m_height);
 
        //m_destX = m_mapWidth - m_width;
        //m_destY = 4;
@@ -138,7 +143,7 @@ void Character::tick() {
        // slow us down:
        velocity = 0;
     }
-
+/*
     if (m_currentX < m_destX && m_currentY == m_destY)
        m_currentSprite = m_spriteRight;
     else if (m_currentX > m_destX && m_currentY == m_destY)
@@ -155,6 +160,10 @@ void Character::tick() {
         m_currentSprite = m_spriteUp;
     else
         m_currentSprite = m_spriteDown;
+*/
+    
+    m_position.w = getGraphicWidth();
+    m_position.h = getGraphicHeight();
 
     // update current frame:
     m_currentFrame = (m_currentFrame == m_currentSprite->getFrameCount() - 1) ? 0 : m_currentFrame + 1;
@@ -169,6 +178,7 @@ void Character::tick() {
     if (abs(m_currentY - m_destY) <= 4)
        m_currentY = m_destY;
 
+
     if (m_currentX < m_destX)
        m_currentX = m_currentX + velocity;
     else if (m_currentX > m_destX)
@@ -178,4 +188,7 @@ void Character::tick() {
        m_currentY = m_currentY + velocity;
     else if (m_currentY > m_destY)
        m_currentY = m_currentY - velocity;
+      
+    m_position.x = m_currentX;
+    m_position.y = m_currentY;
 }
