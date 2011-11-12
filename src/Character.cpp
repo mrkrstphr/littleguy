@@ -134,7 +134,7 @@ int Character::getGraphicHeight() {
 void Character::tick() {
     if (m_currentX == m_destX && m_currentY == m_destY) {
        // generate new destination:
-       m_destX = 32; //(m_mapWidth - m_width) / 2; //rand() % (m_mapWidth - m_width);
+       m_destX = (m_mapWidth - m_width); //(m_mapWidth - m_width) / 2; //rand() % (m_mapWidth - m_width);
        m_destY = (m_mapHeight - m_height);// / 2; //rand() % (m_mapHeight - m_height);
 
        //m_destX = m_mapWidth - m_width;

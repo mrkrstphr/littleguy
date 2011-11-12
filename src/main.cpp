@@ -71,16 +71,13 @@ static void draw () {
             position.y = (SCREEN_HEIGHT / 2) - (position.h / 2);
             
             map.y = character.y - position.y;
-        
-            //printf("testing: [%d vs %d]\n", character.y, position.y);
         }
     }
     
-    /*
     if (position.x + (position.w / 2) <= (SCREEN_WIDTH / 2)) {
         // he is where he is
     } else {
-        if (position.x + (position.h / 2) > (m_level->getMapWidth() * TILE_SIZE) - (SCREEN_WIDTH / 2)) {
+        if (position.x + (position.w / 2) > (m_level->getMapWidth() * TILE_SIZE) - (SCREEN_WIDTH / 2)) {
             // he is @ screen - (size of map - position)
             position.x = SCREEN_WIDTH - ((m_level->getMapWidth() * TILE_SIZE) - position.x);
             
@@ -90,12 +87,8 @@ static void draw () {
             position.x = (SCREEN_WIDTH / 2) - (position.w / 2);
             
             map.x = character.x - position.x;
-        
-            printf("testing: [%d vs %d]\n", character.x, position.x);
         }
     }
-    */
-    
     
     int numTilesX = SCREEN_WIDTH / TILE_SIZE;
     int numTilesY = SCREEN_HEIGHT / TILE_SIZE;
@@ -115,23 +108,27 @@ static void draw () {
         map.y -= TILE_SIZE;
     }
     
-    /*
     for (int x = 0; x <= numTilesX; x++) {
+            
+        int tileX = (map.x / TILE_SIZE) + x;
+        
+        if (tileX > m_level->getMapWidth() - 1) {
+            // TODO FIXME How are we even getting here?
+            printf("Detected a problem: %d > %d\n", tileX, m_level->getMapWidth() - 1);
+            continue;
+        }
+        
         for (int y = 0; y <= numTilesY; y++) {
             
             int tileY = (map.y / TILE_SIZE) + y;
             
-            //printf("map: [%d,%d], tile_x: [%d,%d]\n", x, y, tileX, tileY);
-            
-            printf("getTileAt(%d, %d);\n", x, tileY);
-            
-            //continue;
-            
-            if (tileY >= m_level->getMapHeight()) {
-                printf("Detected a problem: %d >= %d\n", tileY, m_level->getMapHeight());
+            if (tileY > m_level->getMapHeight() - 1) {
+                // TODO FIXME How are we even getting here?
+                printf("Detected a problem: %d > %d\n", tileY, m_level->getMapHeight() - 1);
+                continue;
             }
             
-            int t = m_level->getTileAt(x, tileY);
+            int t = m_level->getTileAt(tileX, tileY);
             
             SDL_Rect dest;
             
@@ -140,17 +137,12 @@ static void draw () {
             dest.x = (x * TILE_SIZE) - (map.x % TILE_SIZE); 
             dest.y = (y * TILE_SIZE) - (map.y % TILE_SIZE);
 
-            //dest.x = i * TILE_SIZE - tileOffsetX; dest.y = j * TILE_SIZE - tileOffsetY;
-            //dest.w = TILE_SIZE; dest.h = TILE_SIZE;
-
-            printf(":== Drawing Tile @ [%d,%d]\n", dest.x, dest.y);
             if (t == 0)
                 SDL_BlitSurface(grass, NULL, screen, &dest);
             else
                 SDL_BlitSurface(dirt, NULL, screen, &dest);
         }
     }
-    */
     
     SDL_BlitSurface(m_character->getCurrentSprite(), NULL, screen, &position);
     SDL_Flip(screen);
