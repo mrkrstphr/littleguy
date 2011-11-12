@@ -33,11 +33,11 @@ class Character {
 
         SDL_Surface *getCurrentSprite();
 
-        int getCharacterX();
-        int getCharacterY();
+        int getX();
+        int getY();
 
-        int getGraphicWidth();
-        int getGraphicHeight();
+        int getWidth();
+        int getHeight();
         
         SDL_Rect getPosition();
 

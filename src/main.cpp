@@ -13,8 +13,8 @@
 #include "Character.h"
 #include "Level.h"
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 256
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 #define TILE_SIZE 32
 
 SDL_Surface *screen = NULL;
@@ -61,9 +61,9 @@ static void draw () {
     if (position.y + (position.h / 2) <= (SCREEN_HEIGHT / 2)) {
         // he is where he is
     } else {
-        if (position.y + (position.h / 2) > (m_level->getMapHeight() * TILE_SIZE) - (SCREEN_HEIGHT / 2)) {
+        if (position.y + (position.h / 2) > (m_level->getHeight() * TILE_SIZE) - (SCREEN_HEIGHT / 2)) {
             // he is @ screen - (size of map - position)
-            position.y = SCREEN_HEIGHT - ((m_level->getMapHeight() * TILE_SIZE) - position.y);
+            position.y = SCREEN_HEIGHT - ((m_level->getHeight() * TILE_SIZE) - position.y);
             
             map.y = character.y - position.y;
         } else {
@@ -77,9 +77,9 @@ static void draw () {
     if (position.x + (position.w / 2) <= (SCREEN_WIDTH / 2)) {
         // he is where he is
     } else {
-        if (position.x + (position.w / 2) > (m_level->getMapWidth() * TILE_SIZE) - (SCREEN_WIDTH / 2)) {
+        if (position.x + (position.w / 2) > (m_level->getWidth() * TILE_SIZE) - (SCREEN_WIDTH / 2)) {
             // he is @ screen - (size of map - position)
-            position.x = SCREEN_WIDTH - ((m_level->getMapWidth() * TILE_SIZE) - position.x);
+            position.x = SCREEN_WIDTH - ((m_level->getWidth() * TILE_SIZE) - position.x);
             
             map.x = character.x - position.x;
         } else {
@@ -103,7 +103,7 @@ static void draw () {
         numTilesY++;
     }
     
-    if ((map.y / TILE_SIZE) + numTilesY > m_level->getMapHeight()) {
+    if ((map.y / TILE_SIZE) + numTilesY > m_level->getHeight()) {
         printf("REDUCING\n");
         map.y -= TILE_SIZE;
     }
@@ -112,9 +112,9 @@ static void draw () {
             
         int tileX = (map.x / TILE_SIZE) + x;
         
-        if (tileX > m_level->getMapWidth() - 1) {
+        if (tileX > m_level->getWidth() - 1) {
             // TODO FIXME How are we even getting here?
-            printf("Detected a problem: %d > %d\n", tileX, m_level->getMapWidth() - 1);
+            printf("Detected a problem: %d > %d\n", tileX, m_level->getWidth() - 1);
             continue;
         }
         
@@ -122,9 +122,9 @@ static void draw () {
             
             int tileY = (map.y / TILE_SIZE) + y;
             
-            if (tileY > m_level->getMapHeight() - 1) {
+            if (tileY > m_level->getHeight() - 1) {
                 // TODO FIXME How are we even getting here?
-                printf("Detected a problem: %d > %d\n", tileY, m_level->getMapHeight() - 1);
+                printf("Detected a problem: %d > %d\n", tileY, m_level->getHeight() - 1);
                 continue;
             }
             
@@ -187,8 +187,8 @@ int main (int argc, char *argv[]) {
        exit(1);
     }
 
-    m_character = new Character(0, 0, m_level->getMapWidth() * TILE_SIZE,
-        m_level->getMapHeight() * TILE_SIZE);
+    m_character = new Character(0, 0, m_level->getWidth() * TILE_SIZE,
+        m_level->getHeight() * TILE_SIZE);
 
     done = 0;
     while (!done) {

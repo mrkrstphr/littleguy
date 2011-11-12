@@ -6,7 +6,7 @@
 class Level {
     private:
         std::vector<std::vector<int> > m_map;
-        int m_mapWidth, m_mapHeight;
+        int m_width, m_height;
 
     public:
         Level(char *fn);
@@ -14,8 +14,8 @@ class Level {
         void outputMap();
 
         int getTileAt(int x, int y);
-        int getMapWidth();
-        int getMapHeight();
+        int getWidth();
+        int getHeight();
 };
 
 #endif

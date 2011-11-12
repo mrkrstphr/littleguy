@@ -86,12 +86,6 @@ Character::Character(int locationX, int locationY, int mapWidth, int mapHeight)
     m_spriteDownLeft->load(SDL_LoadBMP("graphics/boy/walking_sw06.bmp"));
     m_spriteDownLeft->load(SDL_LoadBMP("graphics/boy/walking_sw07.bmp"));
 
-    m_currentSprite = new Sprite();
-    m_currentSprite->load(SDL_LoadBMP("graphics/block.bmp"));
-
-    m_width = 32;
-    m_height = 32;
-
     srand(time(NULL));
 }
 
@@ -115,35 +109,32 @@ SDL_Rect Character::getPosition() {
     return m_position;
 }
 
-int Character::getCharacterX() {
+int Character::getX() {
     return m_currentX;
 }
 
-int Character::getCharacterY() {
+int Character::getY() {
     return m_currentY;
 }
 
-int Character::getGraphicWidth() {
+int Character::getWidth() {
     return getCurrentSprite()->w;
 }
 
-int Character::getGraphicHeight() {
+int Character::getHeight() {
     return getCurrentSprite()->h;
 }
 
 void Character::tick() {
     if (m_currentX == m_destX && m_currentY == m_destY) {
        // generate new destination:
-       m_destX = (m_mapWidth - m_width); //(m_mapWidth - m_width) / 2; //rand() % (m_mapWidth - m_width);
-       m_destY = (m_mapHeight - m_height);// / 2; //rand() % (m_mapHeight - m_height);
-
-       //m_destX = m_mapWidth - m_width;
-       //m_destY = 4;
+       m_destX = rand() % (m_mapWidth - m_width);
+       m_destY = rand() % (m_mapHeight - m_height);
 
        // slow us down:
        velocity = 0;
     }
-/*
+    
     if (m_currentX < m_destX && m_currentY == m_destY)
        m_currentSprite = m_spriteRight;
     else if (m_currentX > m_destX && m_currentY == m_destY)
@@ -160,16 +151,14 @@ void Character::tick() {
         m_currentSprite = m_spriteUp;
     else
         m_currentSprite = m_spriteDown;
-*/
     
-    m_position.w = getGraphicWidth();
-    m_position.h = getGraphicHeight();
+    m_position.w = getWidth();
+    m_position.h = getHeight();
 
     // update current frame:
     m_currentFrame = (m_currentFrame == m_currentSprite->getFrameCount() - 1) ? 0 : m_currentFrame + 1;
 
     if (velocity < 4) velocity++;
-
 
     // if we're close, set us to our goal:
     if (abs(m_currentX - m_destX) <= 4)
