@@ -18,37 +18,37 @@ Level::Level(char *fn) : m_mapWidth(-1), m_mapHeight(-1) {
 
             if (line.substr(0, 2) == "{{")
                 line = line.substr(2, line.length() - 2);
-            if (line.substr(line.length() - 2, 2) == "}}")
-               line = line.substr(0, line.length() - 2);
-            if (line.substr(line.length() - 2, 2) == "},")
-               line = line.substr(0, line.length() - 2);
+            if (line.substr(line.length() - 3, 2) == "}}")
+               line = line.substr(0, line.length() - 3);
+            if (line.substr(line.length() - 3, 2) == "},")
+               line = line.substr(0, line.length() - 3);
             if (line.substr(0, 2) == " {")
                line = line.substr(2, line.length() - 2);
 
             int f = line.find(",");
-            while ((f = line.find(",")) != std::string::npos) { //for (int i = 0; i < line.length(); i++) {
-                //int f = line.find(",");
+            while ((f = line.find(",")) != std::string::npos) {
                 int e = atoi(line.substr(0, f).c_str());
 
                 row.push_back(e);
                 line = line.substr(f + 1);
             }
+            
             int e = atoi(line.substr(0, f).c_str());
             row.push_back(e);
 
-            if (m_mapWidth == -1)
-               m_mapWidth = row.size();
-            else if (m_mapWidth != row.size())
+            if (m_mapWidth == -1) {
+                m_mapWidth = row.size();
+            } else if (m_mapWidth != row.size()) {
                 //throw Exception("Inconsistent map width");
                 printf("Inconsistent map width\n");
+            }
+            
             m_map.push_back(row);
         }
 
         m_mapHeight = m_map.size();
 
         myfile.close();
-
-        //outputMap();
     }
 }
 
