@@ -127,19 +127,18 @@ int Character::getHeight() {
 
 void Character::tick() {
     if (m_currentX == m_destX && m_currentY == m_destY) {
-       // generate new destination:
-       m_destX = rand() % (m_mapWidth - m_width);
-       m_destY = rand() % (m_mapHeight - m_height);
-
-       // slow us down:
-       velocity = 0;
+        // generate new destination:
+        //m_destX = rand() % (m_mapWidth - m_width);
+        //m_destY = rand() % (m_mapHeight - m_height);
+        m_destX = m_mapWidth - 96;
+        m_destY = m_mapHeight - 96;
+        
+        //printf("-- Character destination updated: [%d,%d]\n", m_destX, m_destY);
+        // slow us down:
+        velocity = 0;
     }
     
-    if (m_currentX < m_destX && m_currentY == m_destY)
-       m_currentSprite = m_spriteRight;
-    else if (m_currentX > m_destX && m_currentY == m_destY)
-       m_currentSprite = m_spriteLeft;
-    else if (m_currentX < m_destX && m_currentY < m_destY)
+    if (m_currentX < m_destX && m_currentY < m_destY)
         m_currentSprite = m_spriteDownRight;
     else if (m_currentX > m_destX && m_currentY < m_destY)
         m_currentSprite = m_spriteDownLeft;
@@ -147,6 +146,10 @@ void Character::tick() {
         m_currentSprite = m_spriteUpRight;
     else if (m_currentX > m_destX && m_currentY > m_destY)
         m_currentSprite = m_spriteUpLeft;
+    else if (m_currentX < m_destX && m_currentY == m_destY)
+       m_currentSprite = m_spriteRight;
+    else if (m_currentX > m_destX && m_currentY == m_destY)
+       m_currentSprite = m_spriteLeft;
     else if (m_currentX == m_destX && m_currentY > m_destY)
         m_currentSprite = m_spriteUp;
     else
@@ -158,7 +161,7 @@ void Character::tick() {
     // update current frame:
     m_currentFrame = (m_currentFrame == m_currentSprite->getFrameCount() - 1) ? 0 : m_currentFrame + 1;
 
-    if (velocity < 4) velocity++;
+    if (velocity < 10) velocity++;
 
     // if we're close, set us to our goal:
     if (abs(m_currentX - m_destX) <= 4)

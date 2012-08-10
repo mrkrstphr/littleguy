@@ -22,6 +22,10 @@ class Application {
         Character *m_character;
         
         Level *m_level;
+        
+        int m_numTilesX, m_numTilesY;
+        
+        bool check_collision( SDL_Rect A, SDL_Rect B );
 
 int m_offsetX, m_offsetY;
 
