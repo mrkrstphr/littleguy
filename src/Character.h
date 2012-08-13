@@ -2,6 +2,7 @@
 #define __CHARACTER_H
 
 #include <SDL/SDL.h>
+#include <algorithm>
 #include <time.h>
 
 #include "Sprite.h"

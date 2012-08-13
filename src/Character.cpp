@@ -138,22 +138,23 @@ void Character::tick() {
         velocity = 0;
     }
     
-    if (m_currentX < m_destX && m_currentY < m_destY)
+    if (m_currentX < m_destX && m_currentY < m_destY) {
         m_currentSprite = m_spriteDownRight;
-    else if (m_currentX > m_destX && m_currentY < m_destY)
+    } else if (m_currentX > m_destX && m_currentY < m_destY) {
         m_currentSprite = m_spriteDownLeft;
-    else if (m_currentX < m_destX && m_currentY > m_destY)
+    } else if (m_currentX < m_destX && m_currentY > m_destY) {
         m_currentSprite = m_spriteUpRight;
-    else if (m_currentX > m_destX && m_currentY > m_destY)
+    } else if (m_currentX > m_destX && m_currentY > m_destY) {
         m_currentSprite = m_spriteUpLeft;
-    else if (m_currentX < m_destX && m_currentY == m_destY)
+    } else if (m_currentX < m_destX && m_currentY == m_destY) {
        m_currentSprite = m_spriteRight;
-    else if (m_currentX > m_destX && m_currentY == m_destY)
+    } else if (m_currentX > m_destX && m_currentY == m_destY) {
        m_currentSprite = m_spriteLeft;
-    else if (m_currentX == m_destX && m_currentY > m_destY)
+    } else if (m_currentX == m_destX && m_currentY > m_destY) {
         m_currentSprite = m_spriteUp;
-    else
+    } else {
         m_currentSprite = m_spriteDown;
+    }
     
     m_position.w = getWidth();
     m_position.h = getHeight();
@@ -172,14 +173,14 @@ void Character::tick() {
 
 
     if (m_currentX < m_destX)
-       m_currentX = m_currentX + velocity;
+       m_currentX = m_currentX + (std::min(velocity, std::abs(m_destX - m_currentX)));
     else if (m_currentX > m_destX)
-        m_currentX = m_currentX - velocity;
+        m_currentX = m_currentX - (std::min(velocity, std::abs(m_destX - m_currentX)));
 
     if (m_currentY < m_destY)
-       m_currentY = m_currentY + velocity;
+       m_currentY = m_currentY + (std::min(velocity, std::abs(m_destY - m_currentY)));
     else if (m_currentY > m_destY)
-       m_currentY = m_currentY - velocity;
+       m_currentY = m_currentY - (std::min(velocity, std::abs(m_destY - m_currentY)));
       
     m_position.x = m_currentX;
     m_position.y = m_currentY;
